@@ -1,0 +1,58 @@
+version: "3.8"
+services:
+  api-service:
+    build:
+      context: ./
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./app:/app
+    depends_on:
+      - api-database
+    environment:
+      - DB_HOST=${DB_HOST}
+      - DB_PORT=${DB_PORT}
+      - DB_NAME=${DB_NAME}
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+
+  keycloak:
+    image: quay.io/keycloak/keycloak:latest
+    command: start-dev
+    environment:
+      - KC_DB=postgres
+      - KC_DB_URL=jdbc:postgresql://keycloak-database:5432/${KC_DB_NAME}
+      - KC_DB_USERNAME=${DB_USER}
+      - KC_DB_PASSWORD=${DB_PASSWORD}
+      - KEYCLOAK_ADMIN=${KC_USER}  # Keycloak admin username
+      - KEYCLOAK_ADMIN_PASSWORD=${KC_PASSWORD}  # Keycloak admin password
+    ports:
+      - "8080:8080"
+    depends_on:
+      - keycloak-database
+
+  api-database:
+    image: postgres:latest
+    environment:
+      - POSTGRES_DB=${DB_NAME}
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+    volumes:
+      - api-db-data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+  keycloak-database:
+    image: postgres:latest
+    environment:
+      - POSTGRES_DB=${KC_DB_NAME}
+      - POSTGRES_USER=${KC_USER}
+      - POSTGRES_PASSWORD=${KC_PASSWORD}
+    volumes:
+      - keycloak-db-data:/var/lib/postgresql/data
+    ports:
+      - "5433:5432"  # Different port for Keycloak DB
+
+volumes:
+  api-db-data:
+  keycloak-db-data:
