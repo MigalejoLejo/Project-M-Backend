@@ -22,10 +22,10 @@ services:
     environment:
       - KC_DB=postgres
       - KC_DB_URL=jdbc:postgresql://keycloak-database:5432/${KC_DB_NAME}
-      - KC_DB_USERNAME=${DB_USER}
-      - KC_DB_PASSWORD=${DB_PASSWORD}
-      - KEYCLOAK_ADMIN=${KC_USER}  # Keycloak admin username
-      - KEYCLOAK_ADMIN_PASSWORD=${KC_PASSWORD}  # Keycloak admin password
+      - KC_DB_USERNAME=${KC_DB_USER}
+      - KC_DB_PASSWORD=${KC_DB_PASSWORD}
+      - KEYCLOAK_ADMIN=${KEYCLOAK_ADMIN}  # Keycloak admin username
+      - KEYCLOAK_ADMIN_PASSWORD=${KEYCLOAK_ADMIN_PASSWORD}  # Keycloak admin password
     ports:
       - "8080:8080"
     depends_on:
@@ -46,8 +46,8 @@ services:
     image: postgres:latest
     environment:
       - POSTGRES_DB=${KC_DB_NAME}
-      - POSTGRES_USER=${KC_USER}
-      - POSTGRES_PASSWORD=${KC_PASSWORD}
+      - POSTGRES_USER=${KC_DB_USER}
+      - POSTGRES_PASSWORD=${KC_DB_PASSWORD}
     volumes:
       - keycloak-db-data:/var/lib/postgresql/data
     ports:
