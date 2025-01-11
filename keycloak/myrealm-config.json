@@ -1,0 +1,47 @@
+{
+  "realm": "myrealm",
+  "enabled": true,
+  "displayName": "My Custom Realm",
+  "roles": {
+    "realm": [
+      {
+        "name": "user",
+        "description": "Default role for regular users"
+      },
+      {
+        "name": "admin",
+        "description": "Administrator role"
+      }
+    ]
+  },
+  "users": [
+    {
+      "username": "testuser",
+      "enabled": true,
+      "email": "testuser@example.com",
+      "firstName": "Test",
+      "lastName": "User",
+      "credentials": [
+        {
+          "type": "password",
+          "value": "password123",
+          "temporary": false
+        }
+      ],
+      "realmRoles": ["user"]
+    }
+  ],
+  "clients": [
+    {
+      "clientId": "my-api",
+      "enabled": true,
+      "protocol": "openid-connect",
+      "redirectUris": ["http://localhost:3000/*"],
+      "publicClient": true,
+      "directAccessGrantsEnabled": true,
+      "bearerOnly": false,
+      "webOrigins": ["*"],
+      "defaultRoles": ["user"]
+    }
+  ]
+}

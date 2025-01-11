@@ -17,15 +17,16 @@ services:
       - DB_PASSWORD=${DB_PASSWORD}
 
   keycloak:
-    image: quay.io/keycloak/keycloak:latest
+    build:
+      context: ./keycloak
     command: start-dev
     environment:
       - KC_DB=postgres
       - KC_DB_URL=jdbc:postgresql://keycloak-database:5432/${KC_DB_NAME}
       - KC_DB_USERNAME=${KC_DB_USER}
       - KC_DB_PASSWORD=${KC_DB_PASSWORD}
-      - KEYCLOAK_ADMIN=${KEYCLOAK_ADMIN}  # Keycloak admin username
-      - KEYCLOAK_ADMIN_PASSWORD=${KEYCLOAK_ADMIN_PASSWORD}  # Keycloak admin password
+      - KEYCLOAK_ADMIN=${KC_TEMP_ADMIN}  # Keycloak admin username
+      - KEYCLOAK_ADMIN_PASSWORD=${KC_TEMP_PASSWORD}  # Keycloak admin password
     ports:
       - "8080:8080"
     depends_on:
