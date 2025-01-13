@@ -5,7 +5,5 @@ FROM quay.io/keycloak/keycloak:latest
 WORKDIR /opt/keycloak
 
 # Copy both the script and the realm configuration file into the container
-COPY ./ /opt/keycloak/setup/
-
+COPY myrealm-config.json /opt/keycloak/realms/myrealm-config.json
 # Run the necessary Keycloak startup commands
-CMD ["-b", "0.0.0.0"]

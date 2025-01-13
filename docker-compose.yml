@@ -1,6 +1,6 @@
 version: "3.8"
 services:
-  api-service:
+  app:
     build:
       context: ./
     ports:
@@ -8,7 +8,7 @@ services:
     volumes:
       - ./app:/app
     depends_on:
-      - api-database
+      - database
     environment:
       - DB_HOST=${DB_HOST}
       - DB_PORT=${DB_PORT}
@@ -18,42 +18,40 @@ services:
 
   keycloak:
     build:
-      context: ./keycloak
-    command: start-dev
+      context: ./config/keycloak
+    # command: start-dev 
     environment:
+      # KC Credentials
+      - KC_BOOTSTRAP_ADMIN_USERNAME=${KC_TEMP_ADMIN}  
+      - KC_BOOTSTRAP_ADMIN_PASSWORD=${KC_TEMP_PASSWORD}  
+      # KC Database Credentials
       - KC_DB=postgres
-      - KC_DB_URL=jdbc:postgresql://keycloak-database:5432/${KC_DB_NAME}
+      - KC_DB_URL=jdbc:postgresql://database:5432/${KC_DB_NAME}
       - KC_DB_USERNAME=${KC_DB_USER}
       - KC_DB_PASSWORD=${KC_DB_PASSWORD}
-      - KEYCLOAK_ADMIN=${KC_TEMP_ADMIN}  # Keycloak admin username
-      - KEYCLOAK_ADMIN_PASSWORD=${KC_TEMP_PASSWORD}  # Keycloak admin password
+      - KEYCLOAK_IMPORT=/opt/keycloak/imports/myrealm-config.json  # Add this line to ensure import
     ports:
       - "8080:8080"
     depends_on:
-      - keycloak-database
+      - database
 
-  api-database:
-    image: postgres:latest
+  database:
+    image: postgres:15-alpine
     environment:
-      - POSTGRES_DB=${DB_NAME}
-      - POSTGRES_USER=${DB_USER}
-      - POSTGRES_PASSWORD=${DB_PASSWORD}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      # Api DB Variables
+      - DB_NAME=${DB_NAME}
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+      # Keycloak DB variables
+      - KC_DB_NAME=${KC_DB_NAME}     
+      - KC_DB_USER=${KC_DB_USER}    
+      - KC_DB_PASSWORD=${KC_DB_PASSWORD}  
     volumes:
-      - api-db-data:/var/lib/postgresql/data
+      - ./config/postgres/init-db.sh:/docker-entrypoint-initdb.d/init-db.sh:ro  
+      - database:/var/lib/postgresql/data
     ports:
       - "5432:5432"
 
-  keycloak-database:
-    image: postgres:latest
-    environment:
-      - POSTGRES_DB=${KC_DB_NAME}
-      - POSTGRES_USER=${KC_DB_USER}
-      - POSTGRES_PASSWORD=${KC_DB_PASSWORD}
-    volumes:
-      - keycloak-db-data:/var/lib/postgresql/data
-    ports:
-      - "5433:5432"  # Different port for Keycloak DB
-
 volumes:
-  api-db-data:
-  keycloak-db-data:
+  database:
