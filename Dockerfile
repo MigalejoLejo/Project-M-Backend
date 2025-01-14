@@ -9,10 +9,10 @@ ENV PYTHONUNBUFFERED=1
 WORKDIR /app
 
 # Copy the requirements.txt into /app inside the container
-COPY ./requirements.txt /app/requirements.txt 
+COPY ./requirements.txt /requirements.txt 
 
 # Install dependencies (from inside the /app folder)
-RUN pip install --no-cache-dir -r /app/requirements.txt
+RUN pip install --no-cache-dir -r /requirements.txt
 
 # Copy the entire APIService directory into /app inside the container
 COPY . /app  

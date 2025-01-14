@@ -19,7 +19,7 @@ services:
   keycloak:
     build:
       context: ./config/keycloak
-    # command: start-dev 
+    command: ["start-dev", "--import-realm"]
     environment:
       # KC Credentials
       - KC_BOOTSTRAP_ADMIN_USERNAME=${KC_TEMP_ADMIN}  
